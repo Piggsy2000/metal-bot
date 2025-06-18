@@ -50,7 +50,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Спасибо! Мы рассмотрим вашу группу.")
         await context.bot.send_message(
             chat_id=ADMIN_ID,
-            text=f"🎸 Предложение группы:
+         text = "🎸 Предложение группы:"
+
 "
                  f"👤 От: {name} ({username})
 "
