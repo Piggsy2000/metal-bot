@@ -8,11 +8,14 @@ from telegram.ext import (
     filters
 )
 
+# 🔐 Твой токен и ID
 TOKEN = "7576829058:AAErIT2nPfkQaCL5U38oGoCSKjJCkcJNnus"
 ADMIN_ID = 373599772  # твой Telegram ID
 
+# Временное хранилище состояний пользователей
 user_state = {}
 
+# Команда /start — меню с тремя кнопками
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [InlineKeyboardButton("🎸 Предложить группу", callback_data="band")],
@@ -25,9 +28,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(buttons)
         )
 
+# Обработка нажатия кнопок
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+
     user_id = query.from_user.id
 
     if query.data == "band":
@@ -37,6 +42,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_state[user_id] = "waiting_for_complaint"
         await query.edit_message_text("Опишите, на что хотите пожаловаться:")
 
+# Обработка текстовых сообщений после нажатия кнопок
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     user_id = user.id
@@ -50,14 +56,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Спасибо! Мы рассмотрим вашу группу.")
         await context.bot.send_message(
             chat_id=ADMIN_ID,
-         text = "🎸 Предложение группы:"
-
-"
-                 f"👤 От: {name} ({username})
-"
-                 f"🆔 ID: {user_id}
-
-"
+            text=f"🎸 Предложение группы:\n"
+                 f"👤 От: {name} ({username})\n"
+                 f"🆔 ID: {user_id}\n\n"
                  f"{text}"
         )
         user_state[user_id] = None
@@ -66,13 +67,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Спасибо за жалобу. Мы рассмотрим её.")
         await context.bot.send_message(
             chat_id=ADMIN_ID,
-            text=f"📢 Жалоба:
-"
-                 f"👤 От: {name} ({username})
-"
-                 f"🆔 ID: {user_id}
-
-"
+            text=f"📢 Жалоба:\n"
+                 f"👤 От: {name} ({username})\n"
+                 f"🆔 ID: {user_id}\n\n"
                  f"{text}"
         )
         user_state[user_id] = None
@@ -80,11 +77,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("Нажмите /start и выберите действие.")
 
+# Запуск бота
 def main():
     app = Application.builder().token(TOKEN).build()
+
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
     print("🤘 Бот активен. Напиши /start в Telegram.")
     app.run_polling()
 
