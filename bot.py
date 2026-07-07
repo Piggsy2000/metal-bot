@@ -8,14 +8,14 @@ from telegram.ext import (
     filters
 )
 
-# 🔐 Твой токен и ID
-TOKEN = "7576829058:AAErIT2nPfkQaCL5U38oGoCSKjJCkcJNnus"
-ADMIN_ID = 373599772  # твой Telegram ID
 
-# Временное хранилище состояний пользователей
+TOKEN = ""
+ADMIN_ID =  
+
+
 user_state = {}
 
-# Команда /start — меню с тремя кнопками
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [InlineKeyboardButton("🎸 Предложить группу", callback_data="band")],
@@ -28,7 +28,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(buttons)
         )
 
-# Обработка нажатия кнопок
+
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -42,7 +42,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_state[user_id] = "waiting_for_complaint"
         await query.edit_message_text("Опишите, на что хотите пожаловаться:")
 
-# Обработка текстовых сообщений после нажатия кнопок
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     user_id = user.id
@@ -77,7 +77,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("Нажмите /start и выберите действие.")
 
-# Запуск бота
+
 def main():
     app = Application.builder().token(TOKEN).build()
 
